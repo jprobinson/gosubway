@@ -23,8 +23,8 @@ func main() {
 		log.Fatal(err)
 	}
 
-	mhtn, bkln := feed.Trains(*stop)
+	mhtn, bkln := feed.NextTrains(*stop)
 
-	fmt.Println("Next Brooklyn Bound Train Departes From", *stop, "in", gosubway.NextTrain(bkln))
-	fmt.Println("Next Manhattan Bound Train Departes From", *stop, "in", gosubway.NextTrain(mhtn))
+	fmt.Println("Next Brooklyn Bound Train Departes From", *stop, "in", bkln)
+	fmt.Println("Next Manhattan Bound Train Departes From", *stop, "in", mhtn)
 }

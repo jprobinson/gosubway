@@ -64,6 +64,13 @@ func (f *FeedMessage) Trains(stopId string) (northbound, southbound []*StopTimeU
 	return
 }
 
+func (f *FeedMessage) NextTrains(stopId string) (northbound, southbound time.Duration) {
+	north, south := f.Trains(stopId)
+	northbound = NextTrain(north)
+	southbound = NextTrain(south)
+	return
+}
+
 func NextTrain(updates []*StopTimeUpdate) time.Duration {
 	next := NextTrainTime(updates)
 	return next.Sub(time.Now())
