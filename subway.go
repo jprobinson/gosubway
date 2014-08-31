@@ -79,6 +79,14 @@ func (f *FeedMessage) NextTrains(stopId string) (northbound, southbound time.Dur
 	return
 }
 
+func (f *FeedMessage) NextTrainTimes(stopId string) (northbound, southbound time.Time) {
+
+	north, south := f.Trains(stopId)
+	northbound = NextTrainTime(north)
+	southbound = NextTrainTime(south)
+	return
+}
+
 // NextTrain will return the duration until the next train arrive
 // given the update set.
 func NextTrain(updates []*StopTimeUpdate) time.Duration {
@@ -98,7 +106,7 @@ func NextTrainTime(updates []*StopTimeUpdate) time.Time {
 			unix += int64(*upd.Departure.Delay)
 		}
 		dept := time.Unix(unix, 0)
-		if dept.Before(next) && time.Now().Before(next) {
+		if dept.Before(next) && next.After(time.Now()) {
 			next = dept
 		}
 	}
