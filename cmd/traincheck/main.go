@@ -6,7 +6,6 @@ import (
 	"log"
 
 	"github.com/jprobinson/gosubway"
-	_ "github.com/jprobinson/gtfs/nyct_subway_proto"
 )
 
 var (
@@ -25,6 +24,6 @@ func main() {
 
 	mhtn, bkln := feed.NextTrains(*stop)
 
-	fmt.Println("Next Brooklyn Bound Train Departes From", *stop, "in", bkln)
-	fmt.Println("Next Manhattan Bound Train Departes From", *stop, "in", mhtn)
+	fmt.Println("Next Brooklyn Bound Train Departs From", *stop, "in", bkln)
+	fmt.Println("Next Manhattan Bound Train Departs From", *stop, "in", mhtn)
 }
