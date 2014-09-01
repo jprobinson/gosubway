@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"sort"
 	"strings"
 	"time"
 
@@ -70,35 +71,19 @@ func (f *FeedMessage) Trains(stopId string) (northbound, southbound []*StopTimeU
 	return
 }
 
-// NextTrain will return the duration until the next trains arrive
-// at the given stop.
-func (f *FeedMessage) NextTrains(stopId string) (northbound, southbound time.Duration) {
+// NextTrainTimes will return an ordered slice of upcoming train departure times
+// in either direction.
+func (f *FeedMessage) NextTrainTimes(stopId string) (northbound, southbound []time.Time) {
 	north, south := f.Trains(stopId)
-	northbound = NextTrain(north)
-	southbound = NextTrain(south)
+	northbound = NextTrainTimes(north)
+	southbound = NextTrainTimes(south)
 	return
 }
 
-func (f *FeedMessage) NextTrainTimes(stopId string) (northbound, southbound time.Time) {
-
-	north, south := f.Trains(stopId)
-	northbound = NextTrainTime(north)
-	southbound = NextTrainTime(south)
-	return
-}
-
-// NextTrain will return the duration until the next train arrive
-// given the update set.
-func NextTrain(updates []*StopTimeUpdate) time.Duration {
-	next := NextTrainTime(updates)
-	return next.Sub(time.Now())
-}
-
-// NextTrainTime will return the time the next will train arrive
-// given the update set.
-func NextTrainTime(updates []*StopTimeUpdate) time.Time {
-	// set to far future date so we can grab min date
-	next := time.Now().AddDate(0, 1, 0)
+// NextTrainTimes will extract the departure times from the given
+// update slice, order and return them.
+func NextTrainTimes(updates []*StopTimeUpdate) []time.Time {
+	var times []time.Time
 
 	for _, upd := range updates {
 		unix := *upd.Departure.Time
@@ -106,9 +91,27 @@ func NextTrainTime(updates []*StopTimeUpdate) time.Time {
 			unix += int64(*upd.Departure.Delay)
 		}
 		dept := time.Unix(unix, 0)
-		if dept.Before(next) && next.After(time.Now()) {
-			next = dept
+		if dept.After(time.Now()) {
+			times = append(times, dept)
 		}
 	}
-	return next
+	sort.Sort(timeSlice(times))
+	if len(times) > 5 {
+		times = times[:5]
+	}
+	return times
+}
+
+type timeSlice []time.Time
+
+func (t timeSlice) Len() int {
+	return len(t)
+}
+
+func (t timeSlice) Less(i, j int) bool {
+	return t[i].Before(t[j])
+}
+
+func (t timeSlice) Swap(i, j int) {
+	t[i], t[j] = t[j], t[i]
 }
