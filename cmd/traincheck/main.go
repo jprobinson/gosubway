@@ -4,6 +4,7 @@ import (
 	"flag"
 	"fmt"
 	"log"
+	"time"
 
 	"github.com/jprobinson/gosubway"
 )
@@ -22,8 +23,9 @@ func main() {
 		log.Fatal(err)
 	}
 
-	mhtn, bkln := feed.NextTrains(*stop)
-
-	fmt.Println("Next Brooklyn Bound Train Departs From", *stop, "in", bkln)
-	fmt.Println("Next Manhattan Bound Train Departs From", *stop, "in", mhtn)
+	mhtn, bkln := feed.NextTrainTimes(*stop)
+	nextB := bkln[0].Sub(time.Now())
+	nextM := mhtn[0].Sub(time.Now())
+	fmt.Println("Next Brooklyn Bound Train Departs From", *stop, "in", nextB)
+	fmt.Println("Next Manhattan Bound Train Departs From", *stop, "in", nextM)
 }
