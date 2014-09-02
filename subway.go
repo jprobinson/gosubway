@@ -91,7 +91,7 @@ func NextTrainTimes(updates []*StopTimeUpdate) []time.Time {
 		}
 		unix := *upd.Departure.Time
 		if upd.Departure.Delay != nil {
-			unix += int64(*upd.Departure.Delay)
+			unix += int64(*upd.Departure.Delay * 1000)
 		}
 		dept := time.Unix(unix, 0)
 		if dept.After(time.Now()) {
