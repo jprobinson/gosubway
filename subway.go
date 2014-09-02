@@ -86,6 +86,9 @@ func NextTrainTimes(updates []*StopTimeUpdate) []time.Time {
 	var times []time.Time
 
 	for _, upd := range updates {
+		if upd.Departure == nil {
+			continue
+		}
 		unix := *upd.Departure.Time
 		if upd.Departure.Delay != nil {
 			unix += int64(*upd.Departure.Delay)
