@@ -25,6 +25,8 @@ func GetFeed(key string, lTrain bool) (*FeedMessage, error) {
 	url := fmt.Sprint("http://datamine.mta.info/mta_esi.php?key=", key)
 	if lTrain {
 		url = fmt.Sprint(url, "&feed_id=2")
+	} else {
+		url = fmt.Sprint(url, "&feed_id=1")
 	}
 	resp, err := http.Get(url)
 	if err != nil {
@@ -59,7 +61,7 @@ func (f *FeedMessage) Trains(stopId string) (northbound, southbound []*StopTimeU
 				if strings.HasPrefix(*upd.StopId, stopId) {
 					if strings.HasSuffix(*upd.StopId, "N") {
 						northbound = append(northbound, &StopTimeUpdate{*upd})
-					} else {
+					} else if strings.HasSuffix(*upd.StopId, "S") {
 						southbound = append(southbound, &StopTimeUpdate{*upd})
 					}
 				}
