@@ -1,7 +1,6 @@
 package gosubway
 
 import (
-	"fmt"
 	"io/ioutil"
 	"net/http"
 	"sort"
@@ -22,11 +21,11 @@ type FeedMessage struct {
 // and a boolean specifying which feed (1,2,3,4,5,6,S trains OR L train) and
 // it will return a transit_realtime.FeedMessage with NYCT extensions.
 func GetFeed(key string, lTrain bool) (*FeedMessage, error) {
-	url := fmt.Sprint("http://datamine.mta.info/mta_esi.php?key=", key)
+	url := "http://datamine.mta.info/mta_esi.php?key=" + key
 	if lTrain {
-		url = fmt.Sprint(url, "&feed_id=2")
+		url = url + "&feed_id=2"
 	} else {
-		url = fmt.Sprint(url, "&feed_id=1")
+		url = url + "&feed_id=1"
 	}
 	resp, err := http.Get(url)
 	if err != nil {
