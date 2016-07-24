@@ -7,8 +7,7 @@ import (
 	"strings"
 	"time"
 
-	"code.google.com/p/goprotobuf/proto"
-
+	"github.com/golang/protobuf/proto"
 	_ "github.com/jprobinson/gtfs/nyct_subway_proto"
 	"github.com/jprobinson/gtfs/transit_realtime"
 )
