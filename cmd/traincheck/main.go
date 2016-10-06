@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/jprobinson/gosubway"
+	"golang.org/x/net/context"
 )
 
 var (
@@ -18,7 +19,7 @@ var (
 func main() {
 	flag.Parse()
 
-	feed, err := gosubway.GetFeed(*key, *lTrain)
+	feed, err := gosubway.GetFeed(context.Background(), *key, *lTrain)
 	if err != nil {
 		log.Fatal(err)
 	}
