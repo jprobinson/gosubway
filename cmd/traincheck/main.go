@@ -24,9 +24,15 @@ func main() {
 		log.Fatal(err)
 	}
 
-	mhtn, bkln := feed.NextTrainTimes(*stop)
+	alerts, mhtn, bkln := feed.NextTrainTimes(*stop)
 	nextB := bkln[0].Sub(time.Now())
 	nextM := mhtn[0].Sub(time.Now())
 	fmt.Println("Next Brooklyn Bound Train Departs From", *stop, "in", nextB)
 	fmt.Println("Next Manhattan Bound Train Departs From", *stop, "in", nextM)
+	if len(alerts) > 0 {
+		for _, a := range alerts {
+			fmt.Printf("There is an alert due to %s causing %s: %s\n",
+				a.Cause.String(), a.Effect.String(), a.HeaderText.String())
+		}
+	}
 }

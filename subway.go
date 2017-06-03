@@ -13,13 +13,17 @@ type FeedMessage struct {
 	transit_realtime.FeedMessage
 }
 
+type Alert struct {
+	transit_realtime.Alert
+}
+
 type StopTimeUpdate struct {
 	transit_realtime.TripUpdate_StopTimeUpdate
 }
 
 // Trains will accept a stopId (found here: http://web.mta.info/developers/data/nyct/subway/google_transit.zip)
 // and returns a list of updates from northbound and southbound trains
-func (f *FeedMessage) Trains(stopId string) (northbound, southbound []*StopTimeUpdate) {
+func (f *FeedMessage) Trains(stopId string) (alerts []*Alert, northbound, southbound []*StopTimeUpdate) {
 
 	for _, ent := range f.Entity {
 		if ent.TripUpdate != nil {
@@ -32,20 +36,23 @@ func (f *FeedMessage) Trains(stopId string) (northbound, southbound []*StopTimeU
 					}
 				}
 			}
+			if ent.Alert != nil {
+				alerts = append(alerts, &Alert{*ent.Alert})
+			}
 		}
 
 	}
 
-	return
+	return alerts, northbound, southbound
 }
 
 // NextTrainTimes will return an ordered slice of upcoming train departure times
 // in either direction.
-func (f *FeedMessage) NextTrainTimes(stopId string) (northbound, southbound []time.Time) {
-	north, south := f.Trains(stopId)
+func (f *FeedMessage) NextTrainTimes(stopId string) (alerts []*Alert, northbound, southbound []time.Time) {
+	alerts, north, south := f.Trains(stopId)
 	northbound = NextTrainTimes(north)
 	southbound = NextTrainTimes(south)
-	return
+	return alerts, northbound, southbound
 }
 
 // NextTrainTimes will extract the departure times from the given
