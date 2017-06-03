@@ -23,12 +23,12 @@ type StopTimeUpdate struct {
 
 // Trains will accept a stopId (found here: http://web.mta.info/developers/data/nyct/subway/google_transit.zip)
 // and returns a list of updates from northbound and southbound trains
-func (f *FeedMessage) Trains(stopId string) (alerts []*Alert, northbound, southbound []*StopTimeUpdate) {
-
+func (f *FeedMessage) Trains(stopId, line string) (alerts []*Alert, northbound, southbound []*StopTimeUpdate) {
 	for _, ent := range f.Entity {
 		if ent.TripUpdate != nil {
 			for _, upd := range ent.TripUpdate.StopTimeUpdate {
-				if strings.HasPrefix(*upd.StopId, stopId) {
+				if strings.HasPrefix(*upd.StopId, stopId) &&
+					line == *ent.TripUpdate.Trip.RouteId {
 					if strings.HasSuffix(*upd.StopId, "N") {
 						northbound = append(northbound, &StopTimeUpdate{*upd})
 					} else if strings.HasSuffix(*upd.StopId, "S") {
@@ -42,14 +42,13 @@ func (f *FeedMessage) Trains(stopId string) (alerts []*Alert, northbound, southb
 		}
 
 	}
-
 	return alerts, northbound, southbound
 }
 
 // NextTrainTimes will return an ordered slice of upcoming train departure times
 // in either direction.
-func (f *FeedMessage) NextTrainTimes(stopId string) (alerts []*Alert, northbound, southbound []time.Time) {
-	alerts, north, south := f.Trains(stopId)
+func (f *FeedMessage) NextTrainTimes(stopId, line string) (alerts []*Alert, northbound, southbound []time.Time) {
+	alerts, north, south := f.Trains(stopId, line)
 	northbound = NextTrainTimes(north)
 	southbound = NextTrainTimes(south)
 	return alerts, northbound, southbound
