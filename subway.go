@@ -21,7 +21,17 @@ type StopTimeUpdate struct {
 	transit_realtime.TripUpdate_StopTimeUpdate
 }
 
-// Trains will accept a stopId (found here: http://web.mta.info/developers/data/nyct/subway/google_transit.zip)
+type FeedType int
+
+const (
+	NumberedFeed FeedType = 1
+	BlueFeed     FeedType = 26
+	YellowFeed   FeedType = 16
+	OrangeFeed   FeedType = 21
+	LFeed        FeedType = 2
+)
+
+// Trains will accept a stopId plus a train line (found here: http://web.mta.info/developers/data/nyct/subway/google_transit.zip)
 // and returns a list of updates from northbound and southbound trains
 func (f *FeedMessage) Trains(stopId, line string) (alerts []*Alert, northbound, southbound []*StopTimeUpdate) {
 	for _, ent := range f.Entity {
