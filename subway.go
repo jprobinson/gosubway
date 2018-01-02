@@ -29,6 +29,8 @@ const (
 	YellowFeed   FeedType = 16
 	OrangeFeed   FeedType = 21
 	LFeed        FeedType = 2
+	GFeed        FeedType = 31
+	BrownFeed    FeedType = 36
 )
 
 // Trains will accept a stopId plus a train line (found here: http://web.mta.info/developers/data/nyct/subway/google_transit.zip)
